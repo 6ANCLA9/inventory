@@ -45,6 +45,8 @@
         <!-- Vehicle Related Activities -->
         <activity android:name=".VehiclesActivity" android:parentActivityName=".HomeActivity" />
         <activity android:name=".AddVehicleActivity" android:parentActivityName=".VehiclesActivity" />
+        <activity android:name=".ViewVehicleActivity" android:parentActivityName=".VehiclesActivity" />
+        <activity android:name=".EditVehicleActivity" android:parentActivityName=".ViewVehicleActivity" />
 
         <!-- Brands Related Activities -->
         <activity android:name=".BrandsActivity" android:parentActivityName=".HomeActivity" />
@@ -61,6 +63,8 @@
         <!-- Suppliers Related Activities -->
         <activity android:name=".SuppliersActivity" android:parentActivityName=".HomeActivity" />
         <activity android:name=".AddSupplierActivity" android:parentActivityName=".SuppliersActivity" />
+        <activity android:name=".ViewSupplierActivity" android:parentActivityName=".SuppliersActivity" />
+        <activity android:name=".EditSupplierActivity" android:parentActivityName=".ViewSupplierActivity" />
 
         <!-- Consumer Related Activities -->
         <activity android:name=".ConsumersActivity" android:parentActivityName=".HomeActivity" />

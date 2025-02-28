@@ -119,8 +119,10 @@ public class SuppliersActivity extends AppCompatActivity implements SupplierList
         if (adapter != null) {
             Supplier supplier = adapter.getItem(position);
             if (supplier != null) {
-                Log.d(TAG, "Supplier selected: " + supplier.supplierName);
-                // TODO
+                Log.d(TAG, "Consumer selected: " + supplier.supplierName);
+                Intent intent = new Intent(this, ViewSupplierActivity.class);
+                intent.putExtra("supplier_id", supplier.supplierId);
+                startActivity(intent);
             }
         }
     }

@@ -97,6 +97,7 @@
     <!-- vehicle related -->
     <string name="vehicle">Vehicle</string>
     <string name="add_vehicle">Add Vehicle</string>
+    <string name="edit_vehicle">Edit Vehicle</string>
     <string name="vehicle_details">Vehicle Details</string>
     <string name="vehicle_model">Vehicle Model</string>
     <string name="plate_no">Plate No.</string>
@@ -123,12 +124,14 @@
 
     <!-- supplier related -->
     <string name="add_supplier">Add Supplier</string>
+    <string name="edit_supplier">Edit Supplier</string>
     <string name="supplier_name">Supplier Name</string>
     <string name="supplier_details">Supplier Details</string>
     <string name="no_suppliers">No Suppliers</string>
 
     <!-- consumer related -->
     <string name="add_consumer">Add Consumer</string>
+    <string name="edit_consumer">Edit Consumer</string>
     <string name="consumer_name">Consumer Name</string>
     <string name="consumer_details">Consumer Details</string>
     <string name="no_consumers">No Consumers</string>

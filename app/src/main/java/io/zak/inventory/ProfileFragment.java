@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ public class ProfileFragment extends Fragment {
 
     // Widgets
     private TextView tvUsername, tvPosition, tvContact, tvAddress;
+    private ImageView imageView;
     private ImageButton btnEdit;
     private Button btnLogout;
 

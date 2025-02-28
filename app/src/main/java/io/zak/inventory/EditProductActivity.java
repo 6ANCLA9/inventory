@@ -51,8 +51,6 @@ public class EditProductActivity extends AppCompatActivity {
     private Button btnCancel, btnSave;
     private RelativeLayout progressGroup;
 
-    private Drawable errorDrawable;
-
     private CompositeDisposable disposables;
     private AlertDialog.Builder dialogBuilder;
 
@@ -98,7 +96,6 @@ public class EditProductActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btn_save);
         progressGroup = findViewById(R.id.progress_group);
 
-        errorDrawable = AppCompatResources.getDrawable(this, R.drawable.ic_x_circle);
         dialogBuilder = new AlertDialog.Builder(this);
     }
 
@@ -287,23 +284,17 @@ public class EditProductActivity extends AppCompatActivity {
     }
 
     private boolean validated() {
-        // remove all drawable in EditText
-        etName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-        etPrice.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        boolean isValid = true;
 
-        // check required fields
-        String name = etName.getText().toString();
-        String price = etPrice.getText().toString();
-
-        if (name.isBlank()) {
-            etName.setCompoundDrawablesWithIntrinsicBounds(null, null, errorDrawable, null);
+        if (etName.getText().toString().trim().isEmpty()) {
+            etName.setError("Required");
+            isValid = false;
         }
-
-        if (price.isBlank()) {
-            etPrice.setCompoundDrawablesWithIntrinsicBounds(null, null, errorDrawable, null);
+        if (etPrice.getText().toString().trim().isEmpty()) {
+            etPrice.setError("Required");
+            isValid = false;
         }
-
-        return !name.isBlank() && !price.isBlank();
+        return isValid;
     }
 
     private void saveAndClose() {

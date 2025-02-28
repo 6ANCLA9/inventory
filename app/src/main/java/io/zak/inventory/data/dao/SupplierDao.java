@@ -16,14 +16,14 @@ public interface SupplierDao {
     @Insert
     long insert(Supplier supplier);
 
-    @Insert
-    void insertAll(Supplier...suppliers);
+    @Update
+    int update(Supplier supplier);
 
     @Update
     void updateAll(Supplier...suppliers);
 
     @Delete
-    void delete(Supplier supplier);
+    int delete(Supplier supplier);
 
     @Query("SELECT * FROM suppliers")
     List<Supplier> getAll();

@@ -45,7 +45,6 @@ public class AddProductActivity extends AppCompatActivity {
     private Button btnCancel, btnSave;
     private RelativeLayout progressGroup;
 
-    private Drawable errorDrawable;
 
     // list references to Brands and Categories
     private List<Supplier> supplierList;
@@ -85,7 +84,6 @@ public class AddProductActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btn_save);
         progressGroup = findViewById(R.id.progress_group);
         dialogBuilder = new AlertDialog.Builder(this);
-        errorDrawable = AppCompatResources.getDrawable(this, R.drawable.ic_x_circle);
     }
 
     private void setListeners() {
@@ -201,22 +199,17 @@ public class AddProductActivity extends AppCompatActivity {
     }
 
     private boolean validated() {
-        // clear drawables
-        etName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-        etPrice.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        boolean isValid = true;
 
-        String name = etName.getText().toString();
-        String price = etPrice.getText().toString();
-
-        if (name.isBlank()) {
-            etName.setCompoundDrawablesWithIntrinsicBounds(null, null, errorDrawable, null);
+        if (etName.getText().toString().trim().isEmpty()) {
+            etName.setError("Required");
+            isValid = false;
         }
-
-        if (price.isBlank()) {
-            etPrice.setCompoundDrawablesWithIntrinsicBounds(null, null, errorDrawable, null);
+        if (etPrice.getText().toString().trim().isEmpty()) {
+            etPrice.setError("Required");
+            isValid = false;
         }
-
-        return !name.isBlank() && !price.isBlank();
+        return isValid;
     }
 
     private void saveAndClose() {

@@ -2,6 +2,7 @@ package io.zak.inventory.data.dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -16,14 +17,16 @@ public interface VehicleDao {
     @Insert
     long insert(Vehicle vehicle);
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(Vehicle...vehicles);
 
+    @Update
+    int update(Vehicle vehicle);
     @Update
     void updateAll(Vehicle...vehicles);
 
     @Delete
-    void delete(Vehicle vehicle);
+    int delete(Vehicle vehicle);
 
     @Query("SELECT * FROM vehicles")
     List<Vehicle> getAll();

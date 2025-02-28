@@ -27,27 +27,29 @@ import io.reactivex.rxjava3.core.Single;
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.zak.inventory.data.AppDatabaseImpl;
-import io.zak.inventory.data.entities.Employee;
+import io.zak.inventory.data.entities.Vehicle;
 
-public class EditEmployeeActivity extends AppCompatActivity {
+public class EditVehicleActivity extends AppCompatActivity {
 
-    private static final String TAG = "AddEmployee";
+    private static final String TAG = "AddVehicle";
 
-    private EditText etName, etPosition, etContact, etAddress, etLicense;
-    private Spinner statusSpinner;
+    private EditText etName, etPlateno;
+    private Spinner typeSpinner, statusSpinner;
     private ImageButton btnBack, btnDelete;
     private Button btnCancel, btnSave;
     private RelativeLayout progressGroup;
 
+    private Drawable errorDrawable;
+
     private CompositeDisposable disposables;
     private AlertDialog.Builder dialogBuilder;
 
-    private Employee mEmployee;
+    private Vehicle mVehicle;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_employee);
+        setContentView(R.layout.activity_add_vehicle);
         getWidgets();
         setListeners();
     }
@@ -55,13 +57,11 @@ public class EditEmployeeActivity extends AppCompatActivity {
     private void getWidgets() {
         // Widgets
         TextView tvTitle = findViewById(R.id.title);
-        tvTitle.setText(R.string.edit_employee);
+        tvTitle.setText(R.string.edit_vehicle);
 
         etName = findViewById(R.id.et_name);
-        etPosition = findViewById(R.id.et_position);
-        etContact = findViewById(R.id.et_contact);
-        etAddress = findViewById(R.id.et_address);
-        etLicense = findViewById(R.id.et_license);
+        typeSpinner = findViewById(R.id.type_spinner);
+        etPlateno = findViewById(R.id.et_plate_no);
         statusSpinner = findViewById(R.id.status_spinner);
         btnBack = findViewById(R.id.btn_back);
 
@@ -72,11 +72,17 @@ public class EditEmployeeActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btn_save);
         progressGroup = findViewById(R.id.progress_group);
 
+        errorDrawable = AppCompatResources.getDrawable(this, R.drawable.ic_x_circle);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+        ArrayAdapter<CharSequence> adapter1 = ArrayAdapter.createFromResource(this,
+                R.array.vehicle_types, android.R.layout.simple_spinner_item);
+        adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeSpinner.setAdapter(adapter1);
+
+        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
                 R.array.status_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        statusSpinner.setAdapter(adapter);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        statusSpinner.setAdapter(adapter2);
 
         dialogBuilder = new AlertDialog.Builder(this);
     }
@@ -84,14 +90,14 @@ public class EditEmployeeActivity extends AppCompatActivity {
     private void setListeners() {
         btnBack.setOnClickListener(v -> goBack());
         btnDelete.setOnClickListener(v -> {
-            if (mEmployee != null) {
+            if (mVehicle != null) {
                 dialogBuilder.setTitle("Confirm Delete")
-                        .setMessage("This will delete all data related to this Employee entry. " +
-                                "Are you sure you want to delete this Employee entry?")
+                        .setMessage("This will delete all data related to this Vehicle entry. " +
+                                "Are you sure you want to delete this Vehicle entry?")
                         .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                         .setPositiveButton("Confirm", (dialog, which) -> {
                             dialog.dismiss();
-                            deleteEmployee();
+                            deleteVehicle();
                         });
                 dialogBuilder.create().show();
             }
@@ -109,10 +115,10 @@ public class EditEmployeeActivity extends AppCompatActivity {
         super.onResume();
         if (disposables == null) disposables = new CompositeDisposable();
 
-        int id = getIntent().getIntExtra("employee_id", -1);
+        int id = getIntent().getIntExtra("vehicle_id", -1);
         if (id == -1) {
             dialogBuilder.setTitle("Invalid Action")
-                    .setMessage("Invalid Employee id.")
+                    .setMessage("Invalid Vehicle id.")
                     .setPositiveButton("Dismiss", (dialog, which) -> {
                         dialog.dismiss();
                         goBack();
@@ -123,18 +129,18 @@ public class EditEmployeeActivity extends AppCompatActivity {
 
         progressGroup.setVisibility(View.VISIBLE);
         disposables.add(Single.fromCallable(() -> {
-            Log.d(TAG, "Fetching Employee entry: " + Thread.currentThread());
-            return AppDatabaseImpl.getDatabase(getApplicationContext()).employees().getEmployee(id);
-        }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(employees -> {
+            Log.d(TAG, "Fetching Vehicle entry: " + Thread.currentThread());
+            return AppDatabaseImpl.getDatabase(getApplicationContext()).vehicles().getVehicle(id);
+        }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(vehicles -> {
             progressGroup.setVisibility(View.GONE);
-            Log.d(TAG, "Returned with list size=" + employees.size() + " " + Thread.currentThread());
-            mEmployee = employees.get(0);
-            displayInfo(mEmployee);
+            Log.d(TAG, "Returned with list size=" + vehicles.size() + " " + Thread.currentThread());
+            mVehicle = vehicles.get(0);
+            displayInfo(mVehicle);
         }, err -> {
             progressGroup.setVisibility(View.GONE);
             Log.e(TAG, "Database Error: " + err);
             dialogBuilder.setTitle("Database Error")
-                    .setMessage("Error while fetching Employee entry: " +err)
+                    .setMessage("Error while fetching Vehicle entry: " +err)
                     .setPositiveButton("OK", (dialog, which) -> {
                         dialog.dismiss();
                         goBack();
@@ -143,61 +149,50 @@ public class EditEmployeeActivity extends AppCompatActivity {
         }));
     }
 
-    private void displayInfo(Employee employee) {
-        if (employee != null) {
-            etName.setText(employee.employeeName);
-            etAddress.setText(employee.employeeAddress);
-            etContact.setText(employee.employeeContactNo);
-            etPosition.setText(employee.position);
-            etLicense.setText(employee.licenseNo);
+    private void displayInfo(Vehicle vehicle) {
+        if (vehicle != null) {
+            etName.setText(vehicle.vehicleName);
+            etPlateno.setText(vehicle.plateNo);
 
             List<String> statusList = Arrays.asList(getResources().getStringArray(R.array.status_array));
-            int pos = statusList.indexOf(employee.employeeStatus);
+            int pos = statusList.indexOf(vehicle.vehicleStatus);
             statusSpinner.setSelection(pos);
+
+            List<String> typeList = Arrays.asList(getResources().getStringArray(R.array.status_array));
+            int pos2 = statusList.indexOf(vehicle.vehicleType);
+            typeSpinner.setSelection(pos);
         }
     }
 
     private boolean validated() {
-        boolean isValid = true;
+        // remove all drawable in EditText
+        etName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        etPlateno.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
-        if (etName.getText().toString().trim().isEmpty()) {
-            etName.setError("Required");
-            isValid = false;
+        // check required fields
+        if (etName.getText().toString().isBlank()) {
+            etName.setCompoundDrawablesWithIntrinsicBounds(null, null, errorDrawable, null);
         }
-        if (etPosition.getText().toString().trim().isEmpty()) {
-            etPosition.setError("Required");
-            isValid = false;
+        if (etPlateno.getText().toString().isBlank()) {
+            etPlateno.setCompoundDrawablesWithIntrinsicBounds(null, null, errorDrawable, null);
         }
-        if (etContact.getText().toString().trim().isEmpty()) {
-            etContact.setError("Required");
-            isValid = false;
-        }
-        if (etAddress.getText().toString().trim().isEmpty()) {
-            etAddress.setError("Required");
-            isValid = false;
-        }
-        if (etLicense.getText().toString().trim().isEmpty()) {
-            etLicense.setError("Required");
-            isValid = false;
-        }
-        return isValid;
+
+        return !etName.getText().toString().isBlank() && !etPlateno.getText().toString().isBlank();
     }
 
     private void saveAndClose() {
-        mEmployee.employeeName = Utils.normalize(etName.getText().toString());
-        mEmployee.position = Utils.normalize(etPosition.getText().toString());
-        mEmployee.employeeContactNo = Utils.normalize(etContact.getText().toString());
-        mEmployee.employeeAddress = Utils.normalize(etAddress.getText().toString());
-        mEmployee.employeeStatus = statusSpinner.getSelectedItem().toString();
-        mEmployee.licenseNo = Utils.normalize(etLicense.getText().toString());
+        mVehicle.vehicleName = Utils.normalize(etName.getText().toString());
+        mVehicle.vehicleType = typeSpinner.getSelectedItem().toString();
+        mVehicle.plateNo = Utils.normalize(etPlateno.getText().toString());
+        mVehicle.vehicleStatus = statusSpinner.getSelectedItem().toString();
 
         disposables.add(Single.fromCallable(() -> {
-            Log.d(TAG, "Updating Employee entry: " + Thread.currentThread());
-            return AppDatabaseImpl.getDatabase(getApplicationContext()).employees().update(mEmployee);
+            Log.d(TAG, "Updating Vehicle entry: " + Thread.currentThread());
+            return AppDatabaseImpl.getDatabase(getApplicationContext()).vehicles().update(mVehicle);
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(rowCount -> {
             Log.d(TAG, "Row affected=" + rowCount + ": " + Thread.currentThread());
             if (rowCount > 0) {
-                Toast.makeText(this, "Updated Employee entry.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Updated Vehicle entry.", Toast.LENGTH_SHORT).show();
             }
             goBack();
         }, err -> {
@@ -214,26 +209,26 @@ public class EditEmployeeActivity extends AppCompatActivity {
         }));
     }
 
-    private void deleteEmployee() {
+    private void deleteVehicle() {
         progressGroup.setVisibility(View.VISIBLE);
         disposables.add(Single.fromCallable(() -> {
-            Log.d(TAG, "Deleting Employee entry: " + Thread.currentThread());
-            return AppDatabaseImpl.getDatabase(getApplicationContext()).employees().delete(mEmployee);
+            Log.d(TAG, "Deleting Vehicle entry: " + Thread.currentThread());
+            return AppDatabaseImpl.getDatabase(getApplicationContext()).vehicles().delete(mVehicle);
         }).observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io()).subscribe(rowCount -> {
             progressGroup.setVisibility(View.GONE);
             Log.d(TAG, "Returned with row count=" + rowCount + " " + Thread.currentThread());
             if (rowCount > 0) {
-                Toast.makeText(this, "Deleted Employee entry.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Deleted Vehicle entry.", Toast.LENGTH_SHORT).show();
             }
-            goToEmployeeList();
+            goToVehicleList();
         }, err -> {
             progressGroup.setVisibility(View.GONE);
             Log.e(TAG, "Database Error: " + err);
             dialogBuilder.setTitle("Database Error")
-                    .setMessage("Error while deleting Employee entry: " + err)
+                    .setMessage("Error while deleting Vehicle entry: " + err)
                     .setPositiveButton("OK", (d, w) -> {
                         d.dismiss();
-                        goToEmployeeList();
+                        goToVehicleList();
                     });
             dialogBuilder.create().show();
         }));
@@ -244,8 +239,8 @@ public class EditEmployeeActivity extends AppCompatActivity {
         finish();
     }
 
-    private void goToEmployeeList() {
-        startActivity(new Intent(this, EmployeesActivity.class));
+    private void goToVehicleList() {
+        startActivity(new Intent(this, VehiclesActivity.class));
         finish();
     }
 

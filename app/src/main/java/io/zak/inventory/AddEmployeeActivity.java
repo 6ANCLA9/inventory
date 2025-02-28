@@ -34,8 +34,6 @@ public class AddEmployeeActivity extends AppCompatActivity {
     private Button btnCancel, btnSave;
     private RelativeLayout progressGroup;
 
-    private Drawable errorDrawable;
-
     private CompositeDisposable disposables;
     private AlertDialog.Builder dialogBuilder;
 
@@ -59,7 +57,6 @@ public class AddEmployeeActivity extends AppCompatActivity {
         btnSave = findViewById(R.id.btn_save);
         progressGroup = findViewById(R.id.progress_group);
 
-        errorDrawable =AppCompatResources.getDrawable(this, R.drawable.ic_x_circle);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.status_array, android.R.layout.simple_spinner_item);
@@ -85,19 +82,29 @@ public class AddEmployeeActivity extends AppCompatActivity {
     }
 
     private boolean validated() {
-        // remove all drawable in EditText
-        etName.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-        etPosition.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        boolean isValid = true;
 
-        // check required fields
-        if (etName.getText().toString().isBlank()) {
-            etName.setCompoundDrawablesWithIntrinsicBounds(null, null, errorDrawable, null);
+        if (etName.getText().toString().trim().isEmpty()) {
+            etName.setError("Required");
+            isValid = false;
         }
-        if (etPosition.getText().toString().isBlank()) {
-            etPosition.setCompoundDrawablesWithIntrinsicBounds(null, null, errorDrawable, null);
+        if (etPosition.getText().toString().trim().isEmpty()) {
+            etPosition.setError("Required");
+            isValid = false;
         }
-
-        return !etName.getText().toString().isBlank() && !etPosition.getText().toString().isBlank();
+        if (etContact.getText().toString().trim().isEmpty()) {
+            etContact.setError("Required");
+            isValid = false;
+        }
+        if (etAddress.getText().toString().trim().isEmpty()) {
+            etAddress.setError("Required");
+            isValid = false;
+        }
+        if (etLicense.getText().toString().trim().isEmpty()) {
+            etLicense.setError("Required");
+            isValid = false;
+        }
+        return isValid;
     }
 
     private void saveAndClose() {

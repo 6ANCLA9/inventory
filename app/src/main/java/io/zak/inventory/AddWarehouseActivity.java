@@ -71,8 +71,25 @@ public class AddWarehouseActivity extends AppCompatActivity {
     }
 
     private boolean validated() {
-        return !etName.getText().toString().isBlank();
+        boolean isValid = true;
+
+        if (etName.getText().toString().trim().isEmpty()) {
+            etName.setError("Required");
+            isValid = false;
+        }
+        if (etContact.getText().toString().trim().isEmpty()) {
+            etContact.setError("Required");
+            isValid = false;
+        }
+        if (etAddress.getText().toString().trim().isEmpty()) {
+            etAddress.setError("Required");
+            isValid = false;
+        }
+
+        return isValid;
     }
+
+
 
     private void saveAndClose() {
         Warehouse warehouse = new Warehouse();

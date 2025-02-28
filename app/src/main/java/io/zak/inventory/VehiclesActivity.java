@@ -24,6 +24,7 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import io.zak.inventory.adapters.VehicleListAdapter;
 import io.zak.inventory.data.AppDatabaseImpl;
+import io.zak.inventory.data.entities.Employee;
 import io.zak.inventory.data.entities.Vehicle;
 
 public class VehiclesActivity extends AppCompatActivity implements VehicleListAdapter.OnItemClickListener {
@@ -112,10 +113,11 @@ public class VehiclesActivity extends AppCompatActivity implements VehicleListAd
     public void onItemClick(int position) {
         if (adapter != null) {
             Vehicle vehicle = adapter.getItem(position);
-            if (vehicle != null) {
-                Log.d(TAG, "Vehicle: " + vehicle.vehicleName);
-                // TODO
-            }
+            Log.d(TAG, "Vehicle selected (ID: " + vehicle.vehicleId + ")");
+
+            Intent intent = new Intent(this, ViewVehicleActivity.class);
+            intent.putExtra("vehicleId", vehicle.vehicleId);
+            startActivity(intent);
         }
     }
 
