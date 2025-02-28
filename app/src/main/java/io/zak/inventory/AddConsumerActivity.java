@@ -85,10 +85,6 @@ public class AddConsumerActivity extends AppCompatActivity {
             etContact.setError("Required");
             isValid = false;
         }
-        if (etEmail.getText().toString().trim().isEmpty()) {
-            etEmail.setError("Required");
-            isValid = false;
-        }
         if (etAddress.getText().toString().trim().isEmpty()) {
             etAddress.setError("Required");
             isValid = false;

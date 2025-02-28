@@ -176,10 +176,6 @@ public class EditEmployeeActivity extends AppCompatActivity {
             etAddress.setError("Required");
             isValid = false;
         }
-        if (etLicense.getText().toString().trim().isEmpty()) {
-            etLicense.setError("Required");
-            isValid = false;
-        }
         return isValid;
     }
 
